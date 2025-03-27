@@ -1,25 +1,23 @@
 using GilsApi.Models;
+using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 using System.Text.Json;
 
 namespace GilsApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CountriesController(ApplicationDBContext context, IConnectionMultiplexer redis) : ControllerBase
+public class CountriesController(ApplicationDBContext context, IRedisCacheService cacheService) : ControllerBase
 {
-    private readonly IDatabase _cache = redis.GetDatabase();
-    
-    private const string CacheKeyAll = "countries_all";
-    private const string CacheKeyPrefix = "country_";
+    private const string CacheKeyAll = "countries";
+    private const string CacheKeyPrefix = "country:";
 
     // GET: api/countries
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
     {
-        string? cachedData = await _cache.StringGetAsync(CacheKeyAll);
+        var cachedData = await cacheService.GetCacheAsync(CacheKeyAll);
         if (!string.IsNullOrEmpty(cachedData))
         {
             var cachedCountries = JsonSerializer.Deserialize<List<Country>>(cachedData);
@@ -27,19 +25,18 @@ public class CountriesController(ApplicationDBContext context, IConnectionMultip
         }
 
         var countries = await context.Countries.ToListAsync();
-        await _cache.StringSetAsync(CacheKeyAll, JsonSerializer.Serialize(countries), TimeSpan.FromMinutes(10));
+        await cacheService.SetCacheAsync(CacheKeyAll, countries, TimeSpan.FromMinutes(10));
 
         return Ok(new { source = "database", data = countries });
     }
 
     // GET: api/countries/5
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<Country>> GetCountry(int id)
     {
         var cacheKey = $"{CacheKeyPrefix}{id}";
 
-        string? cachedData = await _cache.StringGetAsync(cacheKey);
-        
+        var cachedData = await cacheService.GetCacheAsync(cacheKey);
         if (!string.IsNullOrEmpty(cachedData))
         {
             var cachedCountry = JsonSerializer.Deserialize<Country>(cachedData);
@@ -52,7 +49,7 @@ public class CountriesController(ApplicationDBContext context, IConnectionMultip
             return NotFound();
         }
 
-        await _cache.StringSetAsync(cacheKey, JsonSerializer.Serialize(country), TimeSpan.FromMinutes(10));
+        await cacheService.SetCacheAsync(cacheKey, country, TimeSpan.FromMinutes(10));
         return Ok(new { source = "database", data = country });
     }
 
@@ -63,13 +60,13 @@ public class CountriesController(ApplicationDBContext context, IConnectionMultip
         context.Countries.Add(country);
         await context.SaveChangesAsync();
 
-        await _cache.KeyDeleteAsync(CacheKeyAll);
+        await cacheService.RemoveCacheAsync(CacheKeyAll);
 
         return CreatedAtAction(nameof(GetCountry), new { id = country.IdCountry }, country);
     }
 
     // PUT: api/countries/5
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> PutCountry(int id, Country country)
     {
         if (id != country.IdCountry)
@@ -81,15 +78,15 @@ public class CountriesController(ApplicationDBContext context, IConnectionMultip
         await context.SaveChangesAsync();
         
         var cacheKey = $"{CacheKeyPrefix}{id}";
-        await _cache.StringSetAsync(cacheKey, JsonSerializer.Serialize(country), TimeSpan.FromMinutes(10));
+        await cacheService.SetCacheAsync(cacheKey, country, TimeSpan.FromMinutes(10));
 
-        await _cache.KeyDeleteAsync(CacheKeyAll);
+        await cacheService.RemoveCacheAsync(CacheKeyAll);
 
         return NoContent();
     }
 
     // DELETE: api/countries/5
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteCountry(int id)
     {
         var country = await context.Countries.FindAsync(id);
@@ -99,13 +96,12 @@ public class CountriesController(ApplicationDBContext context, IConnectionMultip
         }
 
         context.Countries.Remove(country);
-        
         await context.SaveChangesAsync();
-        
+
         var cacheKey = $"{CacheKeyPrefix}{id}";
-        await _cache.KeyDeleteAsync(cacheKey);
-        await _cache.KeyDeleteAsync(CacheKeyAll);
-        
+        await cacheService.RemoveCacheAsync(cacheKey);
+        await cacheService.RemoveCacheAsync(CacheKeyAll);
+
         return NoContent();
     }
 }

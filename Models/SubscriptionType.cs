@@ -9,5 +9,9 @@ public partial class SubscriptionType
 
     public string Name { get; set; } = null!;
 
+    public int DurationId { get; set; }
+
+    public virtual Duration Duration { get; set; } = null!;
+
     public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 }

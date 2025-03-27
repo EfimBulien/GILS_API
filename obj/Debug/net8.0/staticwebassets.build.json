@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "WyKBb5NCHDbt5Li7OlUlZPjyAqPGeYdrtf8HbR9Nka8=",
+  "Hash": "mksTp4WlYJjnX1vDsJmTlVLv/5blAwJCU8shYQEwylA=",
   "Source": "GilsApi",
   "BasePath": "_content/GilsApi",
   "Mode": "Default",
@@ -16,44 +16,6 @@
     }
   ],
   "Assets": [
-    {
-      "Identity": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/bundle/GilsApi.styles.css",
-      "SourceId": "GilsApi",
-      "SourceType": "Computed",
-      "ContentRoot": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/bundle/",
-      "BasePath": "_content/GilsApi",
-      "RelativePath": "GilsApi.styles.css",
-      "AssetKind": "All",
-      "AssetMode": "CurrentProject",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "ScopedCss",
-      "AssetTraitValue": "ApplicationBundle",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/bundle/GilsApi.styles.css"
-    },
-    {
-      "Identity": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/projectbundle/GilsApi.bundle.scp.css",
-      "SourceId": "GilsApi",
-      "SourceType": "Computed",
-      "ContentRoot": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/projectbundle/",
-      "BasePath": "_content/GilsApi",
-      "RelativePath": "GilsApi.bundle.scp.css",
-      "AssetKind": "All",
-      "AssetMode": "Reference",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "ScopedCss",
-      "AssetTraitValue": "ProjectBundle",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/projectbundle/GilsApi.bundle.scp.css"
-    },
     {
       "Identity": "/Users/macbookair/RiderProjects/GilsApi/wwwroot/css/site.css",
       "SourceId": "GilsApi",

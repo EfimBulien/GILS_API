@@ -1,10 +1,6 @@
 {
   "Files": [
     {
-      "Id": "/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/projectbundle/GilsApi.bundle.scp.css",
-      "PackagePath": "staticwebassets/GilsApi.bundle.scp.css"
-    },
-    {
       "Id": "/Users/macbookair/RiderProjects/GilsApi/wwwroot/css/site.css",
       "PackagePath": "staticwebassets/css/site.css"
     },

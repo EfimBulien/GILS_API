@@ -1,2 +1,5 @@
+.DS_Store
+GilsApi.csproj
+GilsApi.sln
 appsettings.json
 appsettings.Development.json

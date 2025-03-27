@@ -95,8 +95,6 @@
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.AssemblyInfo.cs
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.csproj.CoreCompileInputs.cache
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.MvcApplicationPartsAssemblyInfo.cache
-/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.RazorAssemblyInfo.cache
-/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.RazorAssemblyInfo.cs
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/staticwebassets.build.json
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/staticwebassets.development.json
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/staticwebassets/msbuild.GilsApi.Microsoft.AspNetCore.StaticWebAssets.props
@@ -104,9 +102,7 @@
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.GilsApi.props
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.GilsApi.props
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/staticwebassets.pack.json
-/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/Views/Shared/_Layout.cshtml.rz.scp.css
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/bundle/GilsApi.styles.css
-/Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/scopedcss/projectbundle/GilsApi.bundle.scp.css
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.csproj.Up2Date
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/GilsApi.dll
 /Users/macbookair/RiderProjects/GilsApi/obj/Debug/net8.0/refint/GilsApi.dll
@@ -120,3 +116,12 @@
 /Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Pipelines.Sockets.Unofficial.dll
 /Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/StackExchange.Redis.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/BCrypt.Net-Next.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/Users/macbookair/RiderProjects/GilsApi/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
