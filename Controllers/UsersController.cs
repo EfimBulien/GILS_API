@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using GilsApi.Data;
 
 namespace GilsApi.Controllers;
 
@@ -12,7 +13,7 @@ namespace GilsApi.Controllers;
 
 // INFO НА ПРОДАКШЕНЕ РАЗКОММЕНТИРОВАТЬ!
 //[Authorize]
-public class UsersController(ApplicationDBContext context, IRedisCacheService cacheService) : ControllerBase
+public class UsersController(ApplicationDbContext context, IRedisCacheService cacheService) : ControllerBase
 {
     private const string CacheKeyAll = "users";
     private const string CacheKeyPrefix = "user:";

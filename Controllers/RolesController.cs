@@ -3,12 +3,13 @@ using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using GilsApi.Data;
 
 namespace GilsApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class RolesController(ApplicationDBContext context, IRedisCacheService cacheService) : ControllerBase
+public class RolesController(ApplicationDbContext context, IRedisCacheService cacheService) : ControllerBase
 {
     private const string CacheKeyAll = "roles";
     private const string CacheKeyPrefix = "role:";
@@ -44,7 +45,10 @@ public class RolesController(ApplicationDBContext context, IRedisCacheService ca
         }
 
         var role = await context.Roles.FindAsync(id);
-        if (role == null) return NotFound();
+        if (role == null)
+        {
+            return NotFound();
+        }
 
         await cacheService.SetCacheAsync(cacheKey, role, TimeSpan.FromMinutes(10));
         return Ok(new { source = "database", data = role });
@@ -65,7 +69,10 @@ public class RolesController(ApplicationDBContext context, IRedisCacheService ca
     [HttpPut("{id:int}")]
     public async Task<IActionResult> PutRole(int id, Role role)
     {
-        if (id != role.IdRole) return BadRequest();
+        if (id != role.IdRole)
+        {
+            return BadRequest();
+        }
 
         context.Entry(role).State = EntityState.Modified;
         await context.SaveChangesAsync();
@@ -82,7 +89,10 @@ public class RolesController(ApplicationDBContext context, IRedisCacheService ca
     public async Task<IActionResult> DeleteRole(int id)
     {
         var role = await context.Roles.FindAsync(id);
-        if (role == null) return NotFound();
+        if (role == null)
+        {
+            return NotFound();
+        }
 
         context.Roles.Remove(role);
         await context.SaveChangesAsync();

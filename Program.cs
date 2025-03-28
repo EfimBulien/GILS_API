@@ -1,4 +1,5 @@
 using System.Text;
+using GilsApi.Data;
 using GilsApi.Models;
 using GilsApi.Services;
 using StackExchange.Redis;
@@ -10,7 +11,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // PostgreSQL
-builder.Services.AddDbContext<ApplicationDBContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
 // Redis с обработкой ошибок

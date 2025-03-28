@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using GilsApi.Data;
 using GilsApi.DTO;
 using GilsApi.Models;
 using GilsApi.Services;
@@ -12,7 +13,7 @@ namespace GilsApi.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController(ApplicationDBContext context, IRedisCacheService cacheService) : ControllerBase
+public class AuthController(ApplicationDbContext context, IRedisCacheService cacheService) : ControllerBase
 {
     
     private const string SecretKey = "b3BlbnNlc2FtZWFuZG1vcmVzZWNyZXRrZXkh"; 

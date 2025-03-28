@@ -3,12 +3,13 @@ using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using GilsApi.Data;
 
 namespace GilsApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class CountriesController(ApplicationDBContext context, IRedisCacheService cacheService) : ControllerBase
+public class CountriesController(ApplicationDbContext context, IRedisCacheService cacheService) : ControllerBase
 {
     private const string CacheKeyAll = "countries";
     private const string CacheKeyPrefix = "country:";

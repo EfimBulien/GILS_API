@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GilsApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Action = GilsApi.Models.Action;
 
-namespace GilsApi.Models;
+namespace GilsApi.Data;
 
-public partial class ApplicationDBContext : DbContext
+public partial class ApplicationDbContext : DbContext
 {
-    public ApplicationDBContext()
-    {
-    }
+    public ApplicationDbContext() { }
 
-    public ApplicationDBContext(DbContextOptions<ApplicationDBContext> options)
-        : base(options)
-    {
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     public virtual DbSet<Action> Actions { get; set; }
 
@@ -81,9 +76,8 @@ public partial class ApplicationDBContext : DbContext
 
     public virtual DbSet<UsersTrack> UsersTracks { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=gils;Username=postgres;Password=1008");
+    protected override void OnConfiguring(DbContextOptionsBuilder builder) => 
+        builder.UseNpgsql("Host=localhost;Port=5432;Database=gils;Username=postgres;Password=1008");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
