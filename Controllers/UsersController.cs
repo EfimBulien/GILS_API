@@ -49,7 +49,10 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         }
 
         var user = await context.Users.FindAsync(id);
-        if (user == null) return NotFound();
+        if (user == null)
+        {
+            return NotFound();
+        }
 
         await cacheService.SetCacheAsync(cacheKey, user, TimeSpan.FromMinutes(10));
         return Ok(new { source = "database", data = user });
@@ -71,7 +74,10 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
     [HttpPut("{id:int}")]
     public async Task<IActionResult> PutUser(int id, User user)
     {
-        if (id != user.IdUser) return BadRequest();
+        if (id != user.IdUser)
+        {
+            return BadRequest();
+        }
         
         context.Entry(user).State = EntityState.Modified;
 
@@ -99,7 +105,10 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
     public async Task<IActionResult> DeleteUser(int id)
     {
         var user = await context.Users.FindAsync(id);
-        if (user == null) return NotFound();
+        if (user == null)
+        {
+            return NotFound();
+        }
 
         context.Users.Remove(user);
         await context.SaveChangesAsync();
