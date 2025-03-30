@@ -1,4 +1,5 @@
 using System.Text.Json;
+using GilsApi.Common;
 using GilsApi.Data;
 using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,10 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
     private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
     private readonly string _cacheKeyAll = $"{typeof(TEntity).Name.ToLower()}_all";
     private readonly string _cacheKeyPrefix = $"{typeof(TEntity).Name.ToLower()}:";
-    private readonly TimeSpan _standardCacheTimeSpan = TimeSpan.FromMinutes(10);
-    private const string DatabaseSource = "database";
-    private const string CacheSource = "database";
-
-    // GET: api/bananas
+    
+    // GET: api/entities
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
+    public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
     {
         var cachedData = await cacheService.GetCacheAsync(_cacheKeyAll);
         if (!string.IsNullOrEmpty(cachedData))
@@ -28,22 +26,22 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
             var cachedEntities = JsonSerializer.Deserialize<List<TEntity>>(cachedData);
             return Ok(new
             {
-                source = CacheSource, 
+                source = Constants.ResponseSources.Cache, 
                 data = cachedEntities
             });
         }
 
         var entities = await _dbSet.ToListAsync();
-        await cacheService.SetCacheAsync(_cacheKeyAll, entities, _standardCacheTimeSpan);
+        await cacheService.SetCacheAsync(_cacheKeyAll, entities, Constants.StandardCacheDuration);
 
         return Ok(new
         {
-            source = DatabaseSource, 
+            source = Constants.ResponseSources.Database, 
             data = entities
         });
     }
 
-    // GET: api/bananas/5
+    // GET: api/entities/5
     [HttpGet("{id:int}")]
     public async Task<ActionResult<TEntity>> GetById(int id)
     {
@@ -55,7 +53,7 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
             var cachedEntity = JsonSerializer.Deserialize<TEntity>(cachedData);
             return Ok(new
             {
-                source = DatabaseSource, 
+                source = Constants.ResponseSources.Cache, 
                 data = cachedEntity
             });
         }
@@ -66,15 +64,15 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
             return NotFound();
         }
 
-        await cacheService.SetCacheAsync(cacheKey, entity, _standardCacheTimeSpan);
+        await cacheService.SetCacheAsync(cacheKey, entity, Constants.StandardCacheDuration);
         return Ok(new
         {
-            source = DatabaseSource,
+            source = Constants.ResponseSources.Database,
             data = entity
         });
     }
 
-    // POST: api/banana
+    // POST: api/entities
     [HttpPost]
     public async Task<ActionResult<TEntity>> Create(TEntity entity)
     {
@@ -88,7 +86,7 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
         }, entity);
     }
 
-    // PUT: api/banana/5
+    // PUT: api/entities/5
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, TEntity entity)
     {
@@ -101,13 +99,13 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
         await context.SaveChangesAsync();
 
         var cacheKey = $"{_cacheKeyPrefix}{id}";
-        await cacheService.SetCacheAsync(cacheKey, entity, _standardCacheTimeSpan);
+        await cacheService.SetCacheAsync(cacheKey, entity, Constants.StandardCacheDuration);
         await cacheService.RemoveCacheAsync(_cacheKeyAll);
 
         return NoContent();
     }
 
-    // DELETE: api/banana/5
+    // DELETE: api/entities/5
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

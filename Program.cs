@@ -1,6 +1,5 @@
 using System.Text;
 using GilsApi.Data;
-using GilsApi.Models;
 using GilsApi.Services;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -27,8 +26,8 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
 // JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? 
              throw new InvalidOperationException("JWT Key not configured");
-var key = Encoding.UTF8.GetBytes(jwtKey);
 
+var key = Encoding.UTF8.GetBytes(jwtKey);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -83,7 +82,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

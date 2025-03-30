@@ -1,51 +1,75 @@
+using System.Security.Claims;
+using System.Text.Json;
+using GilsApi.Data;
+using GilsApi.Common;
 using GilsApi.Models;
 using GilsApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
-using GilsApi.Data;
 
 namespace GilsApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-
-// INFO НА ПРОДАКШЕНЕ РАЗКОММЕНТИРОВАТЬ!
-//[Authorize]
-public class UsersController(ApplicationDbContext context, IRedisCacheService cacheService) : ControllerBase
+[Authorize]
+public class UsersController(ApplicationDbContext context, IRedisCacheService cacheService)
+    : ControllerBase
 {
-    private const string CacheKeyAll = "users";
+    private const string CacheKeyAll = "users_all";
     private const string CacheKeyPrefix = "user:";
-
+        
+    private const string AdminRoleName = "Admin";
+    private const string DefaultRoleId = "0";
+    
     // GET: api/users
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+    [Authorize(Roles = AdminRoleName)]
+    public async Task<ActionResult<IEnumerable<object>>> GetAllUsers()
     {
         var cachedData = await cacheService.GetCacheAsync(CacheKeyAll);
         if (!string.IsNullOrEmpty(cachedData))
         {
-            var cachedUsers = JsonSerializer.Deserialize<List<User>>(cachedData);
-            return Ok(new { source = "cache", data = cachedUsers });
+            var cachedUsers = JsonSerializer.Deserialize<List<object>>(cachedData);
+            return Ok(new
+            {
+                source = Constants.ResponseSources.Cache,
+                data = cachedUsers
+            });
         }
 
         var users = await context.Users.ToListAsync();
-        await cacheService.SetCacheAsync(CacheKeyAll, users, TimeSpan.FromMinutes(5));
+        var safeUsers = users.Select(GetSafeUser).ToList();
 
-        return Ok(new { source = "database", data = users });
+        await cacheService
+            .SetCacheAsync(CacheKeyAll, safeUsers, Constants.StandardCacheDuration);
+        return Ok(new
+        {
+            source = Constants.ResponseSources.Database, 
+            data = (List<object>?)safeUsers
+        });
     }
 
     // GET: api/users/5
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<ActionResult<object>> GetUser(int id)
     {
+        if (!IsAuthorizedUser(id))
+        {
+            return Forbid();
+        }
+
         var cacheKey = $"{CacheKeyPrefix}{id}";
+            
         var cachedData = await cacheService.GetCacheAsync(cacheKey);
-        
         if (!string.IsNullOrEmpty(cachedData))
         {
-            var cachedUser = JsonSerializer.Deserialize<User>(cachedData);
-            return Ok(new { source = "cache", data = cachedUser });
+            var cachedUser = JsonSerializer.Deserialize<object>(cachedData);
+            return Ok(new
+            {
+                source = Constants.ResponseSources.Cache,
+                data = cachedUser
+            });
         }
 
         var user = await context.Users.FindAsync(id);
@@ -54,39 +78,46 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
             return NotFound();
         }
 
-        await cacheService.SetCacheAsync(cacheKey, user, TimeSpan.FromMinutes(10));
-        return Ok(new { source = "database", data = user });
+        var safeUser = GetSafeUser(user);
+        await cacheService
+            .SetCacheAsync(cacheKey, safeUser, Constants.StandardCacheDuration);
+            
+        return Ok(new
+        {
+            source = Constants.ResponseSources.Database,  
+            data = safeUser
+        });
     }
 
-    // POST: api/users
-    [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
-    {
-        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
-
-        await cacheService.RemoveCacheAsync(CacheKeyAll);
-        return CreatedAtAction(nameof(GetUser), new { id = user.IdUser }, user);
-    }
-    
     // PUT: api/users/5
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> PutUser(int id, User user)
+    public async Task<IActionResult> PutUser(int id, [FromBody] User user)
     {
-        if (id != user.IdUser)
+        if (!IsAuthorizedUser(id))
         {
-            return BadRequest();
+            return Forbid();
         }
-        
-        context.Entry(user).State = EntityState.Modified;
+
+        var existingUser = await context.Users.FindAsync(id);
+        if (existingUser == null)
+        {
+            return NotFound();
+        }
+
+        existingUser.FirstName = user.FirstName;
+        existingUser.LastName = user.LastName;
+        existingUser.Phone = user.Phone;
+        existingUser.Birthday = user.Birthday;
+        existingUser.CityId = user.CityId;
+
+        context.Entry(existingUser).State = EntityState.Modified;
 
         try
         {
             await context.SaveChangesAsync();
-
             var cacheKey = $"{CacheKeyPrefix}{id}";
-            await cacheService.SetCacheAsync(cacheKey, user, TimeSpan.FromMinutes(10));
+            await cacheService
+                .SetCacheAsync(cacheKey, GetSafeUser(existingUser), Constants.StandardCacheDuration);
             await cacheService.RemoveCacheAsync(CacheKeyAll);
         }
         catch (DbUpdateConcurrencyException)
@@ -99,11 +130,16 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         }
         return NoContent();
     }
-    
-    // DELETE: api/users/5
+
+    // DELETE: api/users
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteUser(int id)
     {
+        if (!IsAuthorizedUser(id))
+        {
+            return Forbid();
+        }
+
         var user = await context.Users.FindAsync(id);
         if (user == null)
         {
@@ -116,7 +152,24 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         var cacheKey = $"{CacheKeyPrefix}{id}";
         await cacheService.RemoveCacheAsync(cacheKey);
         await cacheService.RemoveCacheAsync(CacheKeyAll);
-
         return NoContent();
     }
+    
+    private bool IsAuthorizedUser(int id)
+    {
+        var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? DefaultRoleId);
+        return currentUserId == id || User.IsInRole(AdminRoleName);
+    }
+
+    private static object GetSafeUser(User user) 
+        => new {
+            user.IdUser,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            user.RoleId,
+            user.Phone,
+            user.Birthday,
+            user.CityId
+        };
 }
