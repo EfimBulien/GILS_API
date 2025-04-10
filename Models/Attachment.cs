@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Attachment
 {
-    public int IdAttachment { get; set; }
+    public Guid IdAttachment { get; set; }
 
-    public int PostId { get; set; }
+    public Guid PostId { get; set; }
 
     public string Attachment1 { get; set; } = null!;
 

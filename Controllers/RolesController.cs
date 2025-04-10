@@ -1,6 +1,6 @@
 using GilsApi.Models;
 using GilsApi.Services;
-using GilsApi.Data;
+using ApplicationDbContext = GilsApi.Data.ApplicationDbContext;
 
 namespace GilsApi.Controllers;
 

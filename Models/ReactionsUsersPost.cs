@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class ReactionsUsersPost
 {
-    public int IdReactionUserPost { get; set; }
+    public Guid IdReactionUserPost { get; set; }
 
-    public int ReactionId { get; set; }
+    public Guid ReactionId { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
-    public int PostId { get; set; }
+    public Guid PostId { get; set; }
 
     public virtual Post Post { get; set; } = null!;
 

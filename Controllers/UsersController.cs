@@ -1,12 +1,12 @@
 using System.Security.Claims;
 using System.Text.Json;
-using GilsApi.Data;
 using GilsApi.Common;
 using GilsApi.Models;
 using GilsApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ApplicationDbContext = GilsApi.Data.ApplicationDbContext;
 
 namespace GilsApi.Controllers;
 
@@ -18,9 +18,7 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
 {
     private const string CacheKeyAll = "users_all";
     private const string CacheKeyPrefix = "user:";
-        
     private const string AdminRoleName = "Admin";
-    private const string DefaultRoleId = "0";
     
     // GET: api/users
     [HttpGet]
@@ -50,9 +48,9 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         });
     }
 
-    // GET: api/users/5
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<object>> GetUser(int id)
+    // GET: api/users/{id}
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<object>> GetUser(Guid id)
     {
         if (!IsAuthorizedUser(id))
         {
@@ -89,9 +87,9 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         });
     }
 
-    // PUT: api/users/5
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> PutUser(int id, [FromBody] User user)
+    // PUT: api/users/{id}
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> PutUser(Guid id, [FromBody] User user)
     {
         if (!IsAuthorizedUser(id))
         {
@@ -131,9 +129,9 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         return NoContent();
     }
 
-    // DELETE: api/users
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteUser(int id)
+    // DELETE: api/users/{id}
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser(Guid id)
     {
         if (!IsAuthorizedUser(id))
         {
@@ -155,9 +153,14 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         return NoContent();
     }
     
-    private bool IsAuthorizedUser(int id)
+    private bool IsAuthorizedUser(Guid id)
     {
-        var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? DefaultRoleId);
+        var currentUserIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(currentUserIdString, out var currentUserId))
+        {
+            currentUserId = Guid.Empty;
+        }
+
         return currentUserId == id || User.IsInRole(AdminRoleName);
     }
 

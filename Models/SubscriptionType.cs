@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class SubscriptionType
 {
-    public int IdSubscriptionType { get; set; }
+    public Guid IdSubscriptionType { get; set; }
 
     public string Name { get; set; } = null!;
 
-    public int DurationId { get; set; }
+    public Guid DurationId { get; set; }
 
     public virtual Duration Duration { get; set; } = null!;
 

@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/keluch/Desktop/Ind_Practice/GilsAPI/GILS_API/GilsApi.csproj": {}
+    "/Users/macbookair/Documents/GitHub/GILS_API/GilsApi.csproj": {}
   },
   "projects": {
-    "/Users/keluch/Desktop/Ind_Practice/GilsAPI/GILS_API/GilsApi.csproj": {
+    "/Users/macbookair/Documents/GitHub/GILS_API/GilsApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/keluch/Desktop/Ind_Practice/GilsAPI/GILS_API/GilsApi.csproj",
+        "projectUniqueName": "/Users/macbookair/Documents/GitHub/GILS_API/GilsApi.csproj",
         "projectName": "GilsApi",
-        "projectPath": "/Users/keluch/Desktop/Ind_Practice/GilsAPI/GILS_API/GilsApi.csproj",
-        "packagesPath": "/Users/keluch/.nuget/packages/",
-        "outputPath": "/Users/keluch/Desktop/Ind_Practice/GilsAPI/GILS_API/obj/",
+        "projectPath": "/Users/macbookair/Documents/GitHub/GILS_API/GilsApi.csproj",
+        "packagesPath": "/Users/macbookair/.nuget/packages/",
+        "outputPath": "/Users/macbookair/Documents/GitHub/GILS_API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/keluch/.nuget/NuGet/NuGet.Config"
+          "/Users/macbookair/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -115,7 +115,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

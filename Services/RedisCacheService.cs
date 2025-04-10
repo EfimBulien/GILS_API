@@ -3,13 +3,6 @@ using StackExchange.Redis;
 
 namespace GilsApi.Services;
 
-public interface IRedisCacheService
-{
-    Task SetCacheAsync(string key, object value, TimeSpan expiration);
-    Task<string?> GetCacheAsync(string key);
-    Task RemoveCacheAsync(string key);
-}
-
 public class RedisCacheService(IConnectionMultiplexer redis) : IRedisCacheService
 {
     private readonly IDatabase _cache = redis.GetDatabase();

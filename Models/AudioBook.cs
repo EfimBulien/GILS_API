@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class AudioBook
 {
-    public int IdAudioBook { get; set; }
+    public Guid IdAudioBook { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public string Name { get; set; } = null!;
 

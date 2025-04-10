@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Comment
 {
-    public int IdComment { get; set; }
+    public Guid IdComment { get; set; }
 
-    public int PostId { get; set; }
+    public Guid PostId { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public virtual Post Post { get; set; } = null!;
 

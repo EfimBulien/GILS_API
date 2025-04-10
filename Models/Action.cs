@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Action
 {
-    public int IdAction { get; set; }
+    public Guid IdAction { get; set; }
 
     public string Name { get; set; } = null!;
 

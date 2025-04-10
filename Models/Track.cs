@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Track
 {
-    public int IdTrack { get; set; }
+    public Guid IdTrack { get; set; }
 
-    public int AlbumId { get; set; }
+    public Guid AlbumId { get; set; }
 
     public string Name { get; set; } = null!;
 

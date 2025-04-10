@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class SimilarArtist
 {
-    public int IdSimilarArtist { get; set; }
+    public Guid IdSimilarArtist { get; set; }
 
-    public int ArtistId1 { get; set; }
+    public Guid ArtistId1 { get; set; }
 
-    public int ArtistId2 { get; set; }
+    public Guid ArtistId2 { get; set; }
 
     public double SimilarScore { get; set; }
 

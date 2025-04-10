@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Post
 {
-    public int IdPost { get; set; }
+    public Guid IdPost { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public DateTime PublishTime { get; set; }
 

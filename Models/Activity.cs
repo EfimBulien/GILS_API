@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Activity
 {
-    public int IdActivity { get; set; }
+    public Guid IdActivity { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
-    public int TrackId { get; set; }
+    public Guid TrackId { get; set; }
 
-    public int ActionId { get; set; }
+    public Guid ActionId { get; set; }
 
     public DateTime? Timestamp { get; set; }
 

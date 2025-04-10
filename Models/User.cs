@@ -2,7 +2,7 @@
 
 public partial class User
 {
-    public int IdUser { get; set; }
+    public Guid IdUser { get; set; }
 
     public decimal Phone { get; set; }
 
@@ -22,9 +22,9 @@ public partial class User
 
     public string? MerchShop { get; set; }
 
-    public int RoleId { get; set; }
+    public Guid RoleId { get; set; }
 
-    public int CityId { get; set; }
+    public Guid CityId { get; set; }
 
     public virtual ICollection<Activity> Activities { get; set; } = new List<Activity>();
 

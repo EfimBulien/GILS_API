@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Sample
 {
-    public int IdSample { get; set; }
+    public Guid IdSample { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public string Name { get; set; } = null!;
 

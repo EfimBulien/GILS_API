@@ -4,7 +4,6 @@ using Application.Files.Commands.UploadFile;
 using Application.Files.Queries.GetFiles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 using GilsApi.Services;
 

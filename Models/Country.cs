@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Country
 {
-    public int IdCountry { get; set; }
+    public Guid IdCountry { get; set; }
 
     public string Name { get; set; } = null!;
 

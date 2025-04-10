@@ -1,22 +1,20 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using GilsApi.Data;
 using GilsApi.DTO;
 using GilsApi.Models;
 using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ApplicationDbContext = GilsApi.Data.ApplicationDbContext;
 
 namespace GilsApi.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController(ApplicationDbContext context, IRedisCacheService cacheService) : ControllerBase
+public class AuthController(ApplicationDbContext context, IRedisCacheService cacheService, IConfiguration config) : ControllerBase
 {
-    private const string SecretKey = "b3BlbnNlc2FtZWFuZG1vcmVzZWNyZXRrZXkh"; 
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto)
     {
@@ -27,6 +25,7 @@ public class AuthController(ApplicationDbContext context, IRedisCacheService cac
 
         var user = new User
         {
+            IdUser = Guid.NewGuid(), // Явно задаём Guid, если он не создаётся в базе автоматически
             Email = userDto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
             FirstName = userDto.FirstName,
@@ -58,12 +57,12 @@ public class AuthController(ApplicationDbContext context, IRedisCacheService cac
         return Ok(new { token });
     }
 
-    private static string GenerateJwtToken(User user)
+    private string GenerateJwtToken(User user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
-        
+        var jwtKey = config["Jwt:Key"];
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
+
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.IdUser.ToString()),
@@ -72,6 +71,8 @@ public class AuthController(ApplicationDbContext context, IRedisCacheService cac
         };
 
         var token = new JwtSecurityToken(
+            issuer: "GilsApi",
+            audience: "GilsApiClients",
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: credentials

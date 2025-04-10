@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class Reaction
 {
-    public int IdReaction { get; set; }
+    public Guid IdReaction { get; set; }
 
     public string Name { get; set; } = null!;
 
