@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GilsApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ac48c3a16ad4f6656a4ac62eeb8c93ac84b0818")]
 [assembly: System.Reflection.AssemblyProductAttribute("GilsApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GilsApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
