@@ -9,14 +9,13 @@ namespace GilsApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public abstract class BaseController<TEntity>(ApplicationDbContext context, IRedisCacheService cacheService) 
+public abstract class BaseController<TEntity>(ApplicationDbContext context, IRedisCacheService cacheService)
     : ControllerBase where TEntity : class
 {
     private readonly DbSet<TEntity> _dbSet = context.Set<TEntity>();
     private readonly string _cacheKeyAll = $"{typeof(TEntity).Name.ToLower()}_all";
     private readonly string _cacheKeyPrefix = $"{typeof(TEntity).Name.ToLower()}:";
-    
-    // GET: api/entities
+
     [HttpGet]
     public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
     {
@@ -26,7 +25,7 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
             var cachedEntities = JsonSerializer.Deserialize<List<TEntity>>(cachedData);
             return Ok(new
             {
-                source = Constants.ResponseSources.Cache, 
+                source = Constants.ResponseSources.Cache,
                 data = cachedEntities
             });
         }
@@ -36,24 +35,23 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
 
         return Ok(new
         {
-            source = Constants.ResponseSources.Database, 
+            source = Constants.ResponseSources.Database,
             data = entities
         });
     }
 
-    // GET: api/entities/5
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<TEntity>> GetById(int id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<TEntity>> GetById(Guid id)
     {
         var cacheKey = $"{_cacheKeyPrefix}{id}";
-            
+
         var cachedData = await cacheService.GetCacheAsync(cacheKey);
         if (!string.IsNullOrEmpty(cachedData))
         {
             var cachedEntity = JsonSerializer.Deserialize<TEntity>(cachedData);
             return Ok(new
             {
-                source = Constants.ResponseSources.Cache, 
+                source = Constants.ResponseSources.Cache,
                 data = cachedEntity
             });
         }
@@ -72,7 +70,6 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
         });
     }
 
-    // POST: api/entities
     [HttpPost]
     public async Task<ActionResult<TEntity>> Create(TEntity entity)
     {
@@ -86,9 +83,8 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
         }, entity);
     }
 
-    // PUT: api/entities/5
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, TEntity entity)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, TEntity entity)
     {
         if (!EntityIdMatches(id, entity))
         {
@@ -105,9 +101,8 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
         return NoContent();
     }
 
-    // DELETE: api/entities/5
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
     {
         var entity = await _dbSet.FindAsync(id);
         if (entity == null)
@@ -124,16 +119,18 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
 
         return NoContent();
     }
-        
-    private static int GetEntityId(TEntity entity)
+
+    private static Guid GetEntityId(TEntity entity)
     {
         var prop = typeof(TEntity)
             .GetProperty("IdEntity") ?? typeof(TEntity)
             .GetProperty("Id");
-        return (int)(prop?.GetValue(entity) ?? 0);
+
+        return prop != null && Guid.TryParse(prop.GetValue(entity)?
+            .ToString(), out var id) ? id : Guid.Empty;
     }
 
-    private static bool EntityIdMatches(int id, TEntity entity)
+    private static bool EntityIdMatches(Guid id, TEntity entity)
     {
         return GetEntityId(entity) == id;
     }
