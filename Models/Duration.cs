@@ -1,8 +1,11 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Duration
 {
-    public Guid IdDuration { get; set; }
+    public string IdDuration { get; set; } = null!;
 
     public string Text { get; set; } = null!;
 

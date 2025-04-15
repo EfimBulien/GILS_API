@@ -6,7 +6,6 @@ using GilsApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ApplicationDbContext = GilsApi.Data.ApplicationDbContext;
 
 namespace GilsApi.Controllers;
 
@@ -120,7 +119,7 @@ public class UsersController(ApplicationDbContext context, IRedisCacheService ca
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!context.Users.Any(u => u.IdUser == id))
+            if (!context.Users.Any(u => u.IdUser == id.ToString()))
             {
                 return NotFound();
             }

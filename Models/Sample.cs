@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Sample
 {
-    public Guid IdSample { get; set; }
+    public string IdSample { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string ArtistId { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
@@ -12,7 +15,7 @@ public partial class Sample
 
     public string? Description { get; set; }
 
-    public virtual ICollection<ShortVideo> ShortVideos { get; set; } = new List<ShortVideo>();
+    public virtual Artist Artist { get; set; } = null!;
 
-    public virtual User User { get; set; } = null!;
+    public virtual ICollection<ShortVideo> ShortVideos { get; set; } = new List<ShortVideo>();
 }

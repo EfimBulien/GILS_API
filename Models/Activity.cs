@@ -1,14 +1,17 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Activity
 {
-    public Guid IdActivity { get; set; }
+    public string IdActivity { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
-    public Guid TrackId { get; set; }
+    public string TrackId { get; set; } = null!;
 
-    public Guid ActionId { get; set; }
+    public string ActionId { get; set; } = null!;
 
     public DateTime? Timestamp { get; set; }
 

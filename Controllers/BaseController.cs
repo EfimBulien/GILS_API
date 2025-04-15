@@ -1,6 +1,6 @@
 using System.Text.Json;
 using GilsApi.Common;
-using GilsApi.Data;
+using GilsApi.Models;
 using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

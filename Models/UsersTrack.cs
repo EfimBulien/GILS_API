@@ -1,12 +1,15 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class UsersTrack
 {
-    public Guid IdUserTrack { get; set; }
+    public string IdUserTrack { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
-    public Guid TrackId { get; set; }
+    public string TrackId { get; set; } = null!;
 
     public virtual Track Track { get; set; } = null!;
 

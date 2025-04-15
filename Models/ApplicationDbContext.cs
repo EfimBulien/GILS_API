@@ -2,18 +2,15 @@
 
 namespace GilsApi.Models;
 
-public partial class ApplicationDbContext : DbContext
+public partial class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public ApplicationDbContext() { }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options) { }
-
     public virtual DbSet<Action> Actions { get; set; }
 
     public virtual DbSet<Activity> Activities { get; set; }
 
     public virtual DbSet<Album> Albums { get; set; }
+
+    public virtual DbSet<Artist> Artists { get; set; }
 
     public virtual DbSet<Attachment> Attachments { get; set; }
 
@@ -76,10 +73,13 @@ public partial class ApplicationDbContext : DbContext
     public virtual DbSet<UsersTrack> UsersTracks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=gils2;Username=postgres;Password=1008");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=gils3;Username=postgres;Password=1008");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("uuid-ossp");
+
         modelBuilder.Entity<Action>(entity =>
         {
             entity.HasKey(e => e.IdAction).HasName("actions_pkey");
@@ -87,7 +87,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("actions");
 
             entity.Property(e => e.IdAction)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_action");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -101,7 +101,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("activities");
 
             entity.Property(e => e.IdActivity)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_activity");
             entity.Property(e => e.ActionId).HasColumnName("action_id");
             entity.Property(e => e.Timestamp)
@@ -134,8 +134,9 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("albums");
 
             entity.Property(e => e.IdAlbum)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_album");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.Cover).HasColumnName("cover");
             entity.Property(e => e.IsPopular)
                 .HasDefaultValue(false)
@@ -146,13 +147,29 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.ReleaseDate)
                 .HasDefaultValueSql("CURRENT_DATE")
                 .HasColumnName("release_date");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.VideoCover).HasColumnName("video_cover");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Albums)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Artist).WithMany(p => p.Albums)
+                .HasForeignKey(d => d.ArtistId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("albums_user_id_fkey");
+                .HasConstraintName("albums_artist_id_fkey");
+        });
+
+        modelBuilder.Entity<Artist>(entity =>
+        {
+            entity.HasKey(e => e.IdArtist).HasName("artists_pkey");
+
+            entity.ToTable("artists");
+
+            entity.Property(e => e.IdArtist)
+                .HasDefaultValueSql("uuid_generate_v4()")
+                .HasColumnName("id_artist");
+            entity.Property(e => e.MerchShop).HasColumnName("merch_shop");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.Photo).HasColumnName("photo");
+            entity.Property(e => e.SocialLinks).HasColumnName("social_links");
         });
 
         modelBuilder.Entity<Attachment>(entity =>
@@ -162,7 +179,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("attachments");
 
             entity.Property(e => e.IdAttachment)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_attachment");
             entity.Property(e => e.Attachment1).HasColumnName("attachment");
             entity.Property(e => e.PostId).HasColumnName("post_id");
@@ -180,8 +197,9 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("audio_books");
 
             entity.Property(e => e.IdAudioBook)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_audio_book");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.AudioBook1).HasColumnName("audio_book");
             entity.Property(e => e.Cover).HasColumnName("cover");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -189,12 +207,11 @@ public partial class ApplicationDbContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Text).HasColumnName("text");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.User).WithMany(p => p.AudioBooks)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Artist).WithMany(p => p.AudioBooks)
+                .HasForeignKey(d => d.ArtistId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("audio_books_user_id_fkey");
+                .HasConstraintName("audio_books_artist_id_fkey");
         });
 
         modelBuilder.Entity<City>(entity =>
@@ -204,7 +221,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("cities");
 
             entity.Property(e => e.IdCity)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_city");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.Name)
@@ -224,7 +241,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("clips");
 
             entity.Property(e => e.IdClip)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_clip");
             entity.Property(e => e.Clip1).HasColumnName("clip");
             entity.Property(e => e.Description).HasColumnName("description");
@@ -246,7 +263,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("comments");
 
             entity.Property(e => e.IdComment)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_comment");
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -269,7 +286,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("countries");
 
             entity.Property(e => e.IdCountry)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_country");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -283,7 +300,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("durations");
 
             entity.Property(e => e.IdDuration)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_duration");
             entity.Property(e => e.Days).HasColumnName("days");
             entity.Property(e => e.Text)
@@ -298,22 +315,22 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("events");
 
             entity.Property(e => e.IdEvent)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_event");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.CountryId).HasColumnName("country_id");
             entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.Place).HasColumnName("place");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+
+            entity.HasOne(d => d.Artist).WithMany(p => p.Events)
+                .HasForeignKey(d => d.ArtistId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("events_artist_id_fkey");
 
             entity.HasOne(d => d.Country).WithMany(p => p.Events)
                 .HasForeignKey(d => d.CountryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("events_country_id_fkey");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Events)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("events_user_id_fkey");
         });
 
         modelBuilder.Entity<Genre>(entity =>
@@ -323,7 +340,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("genres");
 
             entity.Property(e => e.IdGenre)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_genre");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -337,7 +354,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("genres_tracks");
 
             entity.Property(e => e.IdGenreTrack)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_genre_track");
             entity.Property(e => e.GenreId).HasColumnName("genre_id");
             entity.Property(e => e.TrackId).HasColumnName("track_id");
@@ -360,7 +377,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("likes");
 
             entity.Property(e => e.IdLike)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_like");
             entity.Property(e => e.AlbumId).HasColumnName("album_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -383,7 +400,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("lyrics");
 
             entity.Property(e => e.IdLyric)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_lyric");
             entity.Property(e => e.TextAuthor)
                 .HasMaxLength(255)
@@ -424,22 +441,22 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("podcasts");
 
             entity.Property(e => e.IdPoscast)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_poscast");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.Cover).HasColumnName("cover");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Text).HasColumnName("text");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Video).HasColumnName("video");
             entity.Property(e => e.VideoCover).HasColumnName("video_cover");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Podcasts)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Artist).WithMany(p => p.Podcasts)
+                .HasForeignKey(d => d.ArtistId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("podcasts_user_id_fkey");
+                .HasConstraintName("podcasts_artist_id_fkey");
         });
 
         modelBuilder.Entity<Post>(entity =>
@@ -449,19 +466,19 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("posts");
 
             entity.Property(e => e.IdPost)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_post");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.PublishTime)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone")
                 .HasColumnName("publish_time");
             entity.Property(e => e.Text).HasColumnName("text");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Posts)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Artist).WithMany(p => p.Posts)
+                .HasForeignKey(d => d.ArtistId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("posts_user_id_fkey");
+                .HasConstraintName("posts_artist_id_fkey");
         });
 
         modelBuilder.Entity<Reaction>(entity =>
@@ -471,7 +488,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("reactions");
 
             entity.Property(e => e.IdReaction)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_reaction");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -485,7 +502,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("reactions_users_posts");
 
             entity.Property(e => e.IdReactionUserPost)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_reaction_user_post");
             entity.Property(e => e.PostId).HasColumnName("post_id");
             entity.Property(e => e.ReactionId).HasColumnName("reaction_id");
@@ -514,7 +531,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("reasons");
 
             entity.Property(e => e.IdReason)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_reason");
             entity.Property(e => e.Name)
                 .HasMaxLength(25)
@@ -528,7 +545,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("recommendations");
 
             entity.Property(e => e.IdRecommendation)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_recommendation");
             entity.Property(e => e.ReasonId).HasColumnName("reason_id");
             entity.Property(e => e.TrackId).HasColumnName("track_id");
@@ -554,7 +571,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("roles");
 
             entity.Property(e => e.IdRole)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_role");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
@@ -568,19 +585,19 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("samples");
 
             entity.Property(e => e.IdSample)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_sample");
+            entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.Cover).HasColumnName("cover");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.User).WithMany(p => p.Samples)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Artist).WithMany(p => p.Samples)
+                .HasForeignKey(d => d.ArtistId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("samples_user_id_fkey");
+                .HasConstraintName("samples_artist_id_fkey");
         });
 
         modelBuilder.Entity<Share>(entity =>
@@ -590,7 +607,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("shares");
 
             entity.Property(e => e.IdShare)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_share");
             entity.Property(e => e.AlbumId).HasColumnName("album_id");
             entity.Property(e => e.UserIdSharedBy).HasColumnName("user_id_shared_by");
@@ -619,7 +636,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("short_videos");
 
             entity.Property(e => e.IdShortVideo)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_short_video");
             entity.Property(e => e.SampleId).HasColumnName("sample_id");
 
@@ -636,7 +653,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("similar_artists");
 
             entity.Property(e => e.IdSimilarArtist)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_similar_artist");
             entity.Property(e => e.ArtistId1).HasColumnName("artist_id_1");
             entity.Property(e => e.ArtistId2).HasColumnName("artist_id_2");
@@ -660,7 +677,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("similar_tracks");
 
             entity.Property(e => e.IdSimilarTrack)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_similar_track");
             entity.Property(e => e.SimilarScore).HasColumnName("similar_score");
             entity.Property(e => e.TrackId1).HasColumnName("track_id_1");
@@ -684,7 +701,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("subscriptions");
 
             entity.Property(e => e.IdSubscription)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_subscription");
             entity.Property(e => e.ArtistId).HasColumnName("artist_id");
             entity.Property(e => e.EndDate).HasColumnName("end_date");
@@ -694,8 +711,9 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.SubscriptionTypeId).HasColumnName("subscription_type_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.Artist).WithMany(p => p.SubscriptionArtists)
+            entity.HasOne(d => d.Artist).WithMany(p => p.Subscriptions)
                 .HasForeignKey(d => d.ArtistId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("subscriptions_artist_id_fkey");
 
             entity.HasOne(d => d.SubscriptionType).WithMany(p => p.Subscriptions)
@@ -703,7 +721,7 @@ public partial class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("subscriptions_subscription_type_id_fkey");
 
-            entity.HasOne(d => d.User).WithMany(p => p.SubscriptionUsers)
+            entity.HasOne(d => d.User).WithMany(p => p.Subscriptions)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("subscriptions_user_id_fkey");
@@ -716,7 +734,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("subscription_types");
 
             entity.Property(e => e.IdSubscriptionType)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_subscription_type");
             entity.Property(e => e.DurationId).HasColumnName("duration_id");
             entity.Property(e => e.Name)
@@ -736,9 +754,10 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("tracks");
 
             entity.Property(e => e.IdTrack)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_track");
             entity.Property(e => e.AlbumId).HasColumnName("album_id");
+            entity.Property(e => e.Cover).HasColumnName("cover");
             entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Duration).HasColumnName("duration");
             entity.Property(e => e.IsPopular)
@@ -757,6 +776,7 @@ public partial class ApplicationDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_DATE")
                 .HasColumnName("release_date");
             entity.Property(e => e.Track1).HasColumnName("track");
+            entity.Property(e => e.VideoCover).HasColumnName("video_cover");
 
             entity.HasOne(d => d.Album).WithMany(p => p.Tracks)
                 .HasForeignKey(d => d.AlbumId)
@@ -771,7 +791,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("users");
 
             entity.Property(e => e.IdUser)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_user");
             entity.Property(e => e.Birthday).HasColumnName("birthday");
             entity.Property(e => e.CityId).HasColumnName("city_id");
@@ -784,14 +804,12 @@ public partial class ApplicationDbContext : DbContext
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .HasColumnName("last_name");
-            entity.Property(e => e.MerchShop).HasColumnName("merch_shop");
             entity.Property(e => e.Password).HasColumnName("password");
             entity.Property(e => e.Phone)
                 .HasPrecision(15)
                 .HasColumnName("phone");
             entity.Property(e => e.Photo).HasColumnName("photo");
             entity.Property(e => e.RoleId).HasColumnName("role_id");
-            entity.Property(e => e.SocialLinks).HasColumnName("social_links");
 
             entity.HasOne(d => d.City).WithMany(p => p.Users)
                 .HasForeignKey(d => d.CityId)
@@ -811,7 +829,7 @@ public partial class ApplicationDbContext : DbContext
             entity.ToTable("users_tracks");
 
             entity.Property(e => e.IdUserTrack)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .HasColumnName("id_user_track");
             entity.Property(e => e.TrackId).HasColumnName("track_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");

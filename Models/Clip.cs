@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Clip
 {
-    public Guid IdClip { get; set; }
+    public string IdClip { get; set; } = null!;
 
-    public Guid TrackId { get; set; }
+    public string TrackId { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 

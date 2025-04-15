@@ -1,12 +1,15 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class City
 {
-    public Guid IdCity { get; set; }
+    public string IdCity { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
-    public Guid CountryId { get; set; }
+    public string CountryId { get; set; } = null!;
 
     public virtual Country Country { get; set; } = null!;
 

@@ -1,4 +1,4 @@
-using GilsApi.Data;
+using GilsApi.Models;
 using GilsApi.Services;
 using Action = GilsApi.Models.Action;
 

@@ -1,18 +1,21 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Event
 {
-    public Guid IdEvent { get; set; }
+    public string IdEvent { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string ArtistId { get; set; } = null!;
 
     public DateOnly Date { get; set; }
 
     public string Place { get; set; } = null!;
 
-    public Guid CountryId { get; set; }
+    public string CountryId { get; set; } = null!;
+
+    public virtual Artist Artist { get; set; } = null!;
 
     public virtual Country Country { get; set; } = null!;
-
-    public virtual User User { get; set; } = null!;
 }

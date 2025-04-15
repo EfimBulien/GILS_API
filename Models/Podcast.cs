@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Podcast
 {
-    public Guid IdPoscast { get; set; }
+    public string IdPoscast { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string ArtistId { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
@@ -18,5 +21,5 @@ public partial class Podcast
 
     public string? VideoCover { get; set; }
 
-    public virtual User User { get; set; } = null!;
+    public virtual Artist Artist { get; set; } = null!;
 }

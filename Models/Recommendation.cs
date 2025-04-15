@@ -1,14 +1,17 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Recommendation
 {
-    public Guid IdRecommendation { get; set; }
+    public string IdRecommendation { get; set; } = null!;
 
-    public Guid? UserId { get; set; }
+    public string? UserId { get; set; }
 
-    public Guid? TrackId { get; set; }
+    public string? TrackId { get; set; }
 
-    public Guid? ReasonId { get; set; }
+    public string? ReasonId { get; set; }
 
     public virtual Reason? Reason { get; set; }
 

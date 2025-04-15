@@ -1,5 +1,5 @@
 using System.Text;
-using GilsApi.Data;
+using GilsApi.Models;
 using GilsApi.Services;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

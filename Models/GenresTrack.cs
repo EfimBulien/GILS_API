@@ -1,12 +1,15 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class GenresTrack
 {
-    public Guid IdGenreTrack { get; set; }
+    public string IdGenreTrack { get; set; } = null!;
 
-    public Guid GenreId { get; set; }
+    public string GenreId { get; set; } = null!;
 
-    public Guid TrackId { get; set; }
+    public string TrackId { get; set; } = null!;
 
     public virtual Genre Genre { get; set; } = null!;
 

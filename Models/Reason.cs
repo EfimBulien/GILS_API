@@ -1,8 +1,11 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Reason
 {
-    public Guid IdReason { get; set; }
+    public string IdReason { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 

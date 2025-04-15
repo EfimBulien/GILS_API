@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class ShortVideo
 {
-    public Guid IdShortVideo { get; set; }
+    public string IdShortVideo { get; set; } = null!;
 
-    public Guid SampleId { get; set; }
+    public string SampleId { get; set; } = null!;
 
     public virtual Sample Sample { get; set; } = null!;
 }

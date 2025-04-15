@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Mark
 {
-    public Guid IdMark { get; set; }
+    public string IdMark { get; set; } = null!;
 
-    public Guid LyricId { get; set; }
+    public string LyricId { get; set; } = null!;
 
     public string TextRow { get; set; } = null!;
 

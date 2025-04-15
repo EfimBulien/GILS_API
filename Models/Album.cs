@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Album
 {
-    public Guid IdAlbum { get; set; }
+    public string IdAlbum { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string ArtistId { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
@@ -16,11 +19,11 @@ public partial class Album
 
     public bool IsPopular { get; set; }
 
+    public virtual Artist Artist { get; set; } = null!;
+
     public virtual ICollection<Like> Likes { get; set; } = new List<Like>();
 
     public virtual ICollection<Share> Shares { get; set; } = new List<Share>();
 
     public virtual ICollection<Track> Tracks { get; set; } = new List<Track>();
-
-    public virtual User User { get; set; } = null!;
 }

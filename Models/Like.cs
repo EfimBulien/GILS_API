@@ -1,12 +1,15 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Like
 {
-    public Guid IdLike { get; set; }
+    public string IdLike { get; set; } = null!;
 
-    public Guid UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
-    public Guid AlbumId { get; set; }
+    public string AlbumId { get; set; } = null!;
 
     public virtual Album Album { get; set; } = null!;
 

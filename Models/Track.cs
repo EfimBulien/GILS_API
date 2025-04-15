@@ -1,10 +1,13 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Track
 {
-    public Guid IdTrack { get; set; }
+    public string IdTrack { get; set; } = null!;
 
-    public Guid AlbumId { get; set; }
+    public string AlbumId { get; set; } = null!;
 
     public string Name { get; set; } = null!;
 
@@ -13,6 +16,10 @@ public partial class Track
     public string? Producer { get; set; }
 
     public string? MainArtist { get; set; }
+
+    public string Cover { get; set; } = null!;
+
+    public string? VideoCover { get; set; }
 
     public string Track1 { get; set; } = null!;
 

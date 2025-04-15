@@ -7,13 +7,14 @@ using GilsApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ApplicationDbContext = GilsApi.Data.ApplicationDbContext;
+using ApplicationDbContext = GilsApi.Models.ApplicationDbContext;
 
 namespace GilsApi.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController(ApplicationDbContext context, IRedisCacheService cacheService, IConfiguration config) : ControllerBase
+public class AuthController(ApplicationDbContext context, IRedisCacheService cacheService, IConfiguration config) 
+    : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto)
@@ -25,15 +26,15 @@ public class AuthController(ApplicationDbContext context, IRedisCacheService cac
 
         var user = new User
         {
-            IdUser = Guid.NewGuid(), // Явно задаём Guid, если он не создаётся в базе автоматически
+            IdUser = Guid.NewGuid().ToString(),
             Email = userDto.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(userDto.Password),
             FirstName = userDto.FirstName,
             LastName = userDto.LastName,
             Phone = userDto.Phone,
             Birthday = userDto.Birthday,
-            CityId = userDto.CityId,
-            RoleId = userDto.RoleId
+            CityId = userDto.CityId.ToString(),
+            RoleId = userDto.RoleId.ToString()
         };
 
         context.Users.Add(user);
@@ -65,9 +66,9 @@ public class AuthController(ApplicationDbContext context, IRedisCacheService cac
 
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.IdUser.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.IdUser),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.RoleId.ToString())
+            new Claim(ClaimTypes.Role, user.RoleId)
         };
 
         var token = new JwtSecurityToken(

@@ -1,12 +1,15 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class SimilarTrack
 {
-    public Guid IdSimilarTrack { get; set; }
+    public string IdSimilarTrack { get; set; } = null!;
 
-    public Guid TrackId1 { get; set; }
+    public string TrackId1 { get; set; } = null!;
 
-    public Guid TrackId2 { get; set; }
+    public string TrackId2 { get; set; } = null!;
 
     public double SimilarScore { get; set; }
 

@@ -1,14 +1,17 @@
-﻿namespace GilsApi.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GilsApi.Models;
 
 public partial class Share
 {
-    public Guid IdShare { get; set; }
+    public string IdShare { get; set; } = null!;
 
-    public Guid UserIdSharedBy { get; set; }
+    public string UserIdSharedBy { get; set; } = null!;
 
-    public Guid UserIdSharedWith { get; set; }
+    public string UserIdSharedWith { get; set; } = null!;
 
-    public Guid AlbumId { get; set; }
+    public string AlbumId { get; set; } = null!;
 
     public virtual Album Album { get; set; } = null!;
 
