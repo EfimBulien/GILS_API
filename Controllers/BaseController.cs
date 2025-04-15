@@ -17,7 +17,7 @@ public abstract class BaseController<TEntity>(ApplicationDbContext context, IRed
     private readonly string _cacheKeyPrefix = $"{typeof(TEntity).Name.ToLower()}:";
 
     [HttpGet]
-    public virtual async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
+    public async Task<ActionResult<IEnumerable<TEntity>>> GetAll()
     {
         var cachedData = await cacheService.GetCacheAsync(_cacheKeyAll);
         if (!string.IsNullOrEmpty(cachedData))
