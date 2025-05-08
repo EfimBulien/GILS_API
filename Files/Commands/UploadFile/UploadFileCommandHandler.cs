@@ -1,8 +1,8 @@
-using Application.Common.Interfaces;
-using Domain.Entities;
+using GilsApi.Common.Interfaces;
+using GilsApi.Domain.Entities;
 using MediatR;
 
-namespace Application.Files.Commands.UploadFile;
+namespace GilsApi.Files.Commands.UploadFile;
 
 public class UploadFileCommandHandler(IFileManager fileManager, IFileDataRepository fileDataRepository) 
     : IRequestHandler<UploadFileCommand, string>

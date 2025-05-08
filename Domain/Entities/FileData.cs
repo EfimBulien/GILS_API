@@ -1,6 +1,6 @@
-using Domain.Common;
+using GilsApi.Domain.Common;
 
-namespace Domain.Entities;
+namespace GilsApi.Domain.Entities;
 
 public class FileData : BaseEntity
 {

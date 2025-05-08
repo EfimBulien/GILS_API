@@ -1,7 +1,7 @@
-using Application.Common.Interfaces;
+using GilsApi.Common.Interfaces;
 using MediatR;
 
-namespace Application.Files.Queries.GetFiles;
+namespace GilsApi.Files.Queries.GetFiles;
 
 public class GetFilesQueryHandler(
     IFileDataRepository fileDataRepository

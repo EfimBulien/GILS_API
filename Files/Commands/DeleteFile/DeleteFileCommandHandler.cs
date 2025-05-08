@@ -1,9 +1,9 @@
-using Application.Common.Interfaces;
-using Application.Exceptions;
-using Domain.Entities;
+using GilsApi.Common.Interfaces;
+using GilsApi.Domain.Entities;
+using GilsApi.Exceptions;
 using MediatR;
 
-namespace Application.Files.Commands.DeleteFile;
+namespace GilsApi.Files.Commands.DeleteFile;
 
 public class DeleteFileCommandHandler(
     IFileDataRepository fileDataRepository,
@@ -13,10 +13,11 @@ public class DeleteFileCommandHandler(
     public async Task<Unit> Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
         var fileData = await fileDataRepository.FindFileDataByFileNameAndBucketName(
-                            request.BucketName,
-                            request.FileName,
-                            cancellationToken)
-                        ?? throw new NotFoundException(nameof(FileData), $"{request.FileName} in {request.BucketName}");
+                           request.BucketName, 
+                           request.FileName, 
+                           cancellationToken)
+                       ?? throw new NotFoundException(nameof(FileData),
+                           $"{request.FileName} in {request.BucketName}");
 
         await fileManager.DeleteFile(request.BucketName, request.FileName);
         await fileDataRepository.DeleteFileData(fileData, cancellationToken);

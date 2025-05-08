@@ -1,4 +1,4 @@
-namespace Application.Files;
+namespace GilsApi.Files;
 
 public sealed record FileResponse(
     MemoryStream MemoryStream,

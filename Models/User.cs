@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GilsApi.Models;
+﻿namespace GilsApi.Models;
 
 public partial class User
 {

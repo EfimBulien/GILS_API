@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
-// Redis с обработкой ошибок
+// Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ => 
 {
     var configuration = ConfigurationOptions.Parse(
@@ -23,7 +23,7 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
     return ConnectionMultiplexer.Connect(configuration);
 });
 
-// JWT Authentication
+// JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? 
              throw new InvalidOperationException("JWT Key not configured");
 

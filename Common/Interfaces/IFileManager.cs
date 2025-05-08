@@ -1,4 +1,4 @@
-namespace Application.Common.Interfaces;
+namespace GilsApi.Common.Interfaces;
 
 public interface IFileManager
 {

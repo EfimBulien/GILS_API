@@ -1,4 +1,4 @@
-namespace Application.Exceptions;
+namespace GilsApi.Exceptions;
 
 public sealed class NotFoundException(string name, object key) 
     : Exception($"Entity: {name} ({key}) not found");

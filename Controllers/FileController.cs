@@ -1,10 +1,10 @@
-using Application.Files.Commands.DeleteFile;
-using Application.Files.Commands.DownloadFile;
-using Application.Files.Commands.UploadFile;
-using Application.Files.Queries.GetFiles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using GilsApi.Files.Commands.DeleteFile;
+using GilsApi.Files.Commands.DownloadFile;
+using GilsApi.Files.Commands.UploadFile;
+using GilsApi.Files.Queries.GetFiles;
 using GilsApi.Services;
 
 namespace GilsApi.Controllers;

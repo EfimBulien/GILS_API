@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Application.Files.Queries.GetFiles;
+namespace GilsApi.Files.Queries.GetFiles;
 
 public sealed record GetFilesQuery(
     string BucketName

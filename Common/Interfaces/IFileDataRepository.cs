@@ -1,6 +1,6 @@
-using Domain.Entities;
+using GilsApi.Domain.Entities;
 
-namespace Application.Common.Interfaces;
+namespace GilsApi.Common.Interfaces;
 
 public interface IFileDataRepository
 {

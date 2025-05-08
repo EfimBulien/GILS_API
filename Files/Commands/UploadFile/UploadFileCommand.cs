@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Application.Files.Commands.UploadFile;
+namespace GilsApi.Files.Commands.UploadFile;
 
 public sealed record UploadFileCommand(
     Stream Stream,

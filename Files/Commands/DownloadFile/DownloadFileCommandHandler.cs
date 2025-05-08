@@ -1,9 +1,9 @@
-using Application.Common.Interfaces;
-using Application.Exceptions;
-using Domain.Entities;
+using GilsApi.Common.Interfaces;
+using GilsApi.Domain.Entities;
+using GilsApi.Exceptions;
 using MediatR;
 
-namespace Application.Files.Commands.DownloadFile;
+namespace GilsApi.Files.Commands.DownloadFile;
 
 public class DownloadFileCommandHandler(
     IFileDataRepository fileDataRepository,
@@ -16,7 +16,8 @@ public class DownloadFileCommandHandler(
                            request.BucketName,
                            request.FileName,
                            cancellationToken)
-                       ?? throw new NotFoundException(nameof(FileData), $"{request.FileName} in {request.BucketName}");
+                       ?? throw new NotFoundException(nameof(FileData), 
+                           $"{request.FileName} in {request.BucketName}");
 
         var stream = await fileManager.DownloadFile(request.BucketName, request.FileName);
         return new FileResponse(stream, fileData.FileType, fileData.FileName);
